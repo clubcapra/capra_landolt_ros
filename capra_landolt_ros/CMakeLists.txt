@@ -32,33 +32,33 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
-add_library(capra_landolt_nodelet src/LandoltNodelet.cpp)
-target_link_libraries(capra_landolt_nodelet ${catkin_LIBRARIES})
-add_dependencies(capra_landolt_nodelet capra_landolt_msgs_gencpp)
+add_library(${PROJECT_NAME} src/LandoltNodelet.cpp)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(${PROJECT_NAME} capra_landolt_msgs_gencpp)
 
 if(catkin_EXPORTED_LIBRARIES)
   add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_LIBRARIES})
 endif()
 
-if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
-  catkin_add_executable_with_gtest(landolt_test test/landolt_test.cpp)
-  add_rostest(test/capra_detection.test ARGS datapath:=${PROJECT_SOURCE_DIR}/test/sample/)
-  target_link_libraries(landolt_test ${catkin_LIBRARIES})
-endif()
-
 roslint_cpp()
 
-install(TARGETS capra_landolt_nodelet
-	RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
-
-install(DIRECTORY launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(TARGETS ${PROJECT_NAME}
+  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
 install(FILES nodelet.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+if(CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+    add_rostest_gtest(landolt_test test/capra_detection.test test/landolt_test.cpp)
+    target_link_libraries(landolt_test ${catkin_LIBRARIES})
+endif()

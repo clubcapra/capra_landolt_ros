@@ -6,7 +6,7 @@
         <param name="subscriber_image" type="str" value="/capra/camera_3d/rgb/image_raw" />
     </node>
 
-    <param name="datapath" value="$(arg datapath)"/>
+    <param name="datapath" value="$(find capra_landolt_ros)/test/sample/"/>
     
     <test pkg="capra_landolt_ros" type="landolt_test" test-name="landolt_test" time-limit="10.0" />
 </launch>
