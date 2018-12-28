@@ -1,4 +1,4 @@
-<library path="lib/libcapra_landolt_nodelet">
+<library path="lib/libcapra_landolt_ros">
   <class name="capra/LandoltNodelet" type="capra::LandoltNodelet" base_class_type="nodelet::Nodelet">
   <description>
   Landolt Nodelet.
