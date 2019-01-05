@@ -1,5 +1,4 @@
-# capra_landolt_ros
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
+# capra_landolt_ros [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
 capra_landolt_ros detect landolt C in a camera feed in ROS
 
