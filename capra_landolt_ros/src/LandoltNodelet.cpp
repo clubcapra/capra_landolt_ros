@@ -6,10 +6,9 @@
 #include "capra_landolt_msgs/Landolts.h"
 #include "capra_landolt_msgs/BoundingCircles.h"
 #include "nodelet/nodelet.h"
+#include "pluginlib/class_list_macros.h"
 
-#include <pluginlib/class_list_macros.h>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/lock_guard.hpp>
+#include <mutex>
 
 namespace capra
 {
@@ -27,12 +26,12 @@ public:
     void onInit() override;
 private:
     // Subscriber
-    boost::shared_ptr<image_transport::ImageTransport> it_;
+    std::shared_ptr<image_transport::ImageTransport> it_;
     image_transport::CameraSubscriber sub_camera_;
     int queue_size_{};
 
     // Publisher
-    boost::mutex connect_mutex_;
+    std::mutex connect_mutex_;
     image_transport::Publisher image_pub_;
     ros::Publisher landolt_pub_;
     ros::Publisher bounding_pub_;
@@ -71,10 +70,10 @@ void LandoltNodelet::onInit()
     // Read parameters
     private_nh.param("queue_size", queue_size_, 5);
     
-    ros::SubscriberStatusCallback connect_cb = boost::bind(&LandoltNodelet::connectCb, this);
-    image_transport::SubscriberStatusCallback img_connect_cb = boost::bind(&LandoltNodelet::connectCb, this);
+    ros::SubscriberStatusCallback connect_cb = std::bind(&LandoltNodelet::connectCb, this);
+    image_transport::SubscriberStatusCallback img_connect_cb = std::bind(&LandoltNodelet::connectCb, this);
     // Make sure we don't enter connectCb() between advertising and assigning to pub_rect_
-    boost::lock_guard<boost::mutex> lock(connect_mutex_);
+    std::lock_guard<std::mutex> lock(connect_mutex_);
 
     bounding_pub_ = nh.advertise<capra_landolt_msgs::BoundingCircles>("boundings", 1, connect_cb, connect_cb);
     landolt_pub_ = nh.advertise<capra_landolt_msgs::Landolts>("landolts", 1, connect_cb, connect_cb);
@@ -83,7 +82,7 @@ void LandoltNodelet::onInit()
 
 void LandoltNodelet::connectCb()
 {
-    boost::lock_guard<boost::mutex> lock(connect_mutex_);
+    std::lock_guard<std::mutex> lock(connect_mutex_);
     if (landolt_pub_.getNumSubscribers() == 0 && 
         image_pub_.getNumSubscribers() == 0 &&
         bounding_pub_.getNumSubscribers() == 0)

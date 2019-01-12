@@ -3,7 +3,6 @@ project(capra_landolt_ros)
 
 add_compile_options(-std=c++11)
 
-find_package(Boost REQUIRED COMPONENTS thread)
 find_package(OpenCV REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
@@ -25,18 +24,15 @@ catkin_package(
     capra_landolt_msgs
     std_msgs 
     image_transport
-  DEPENDS
-    Boost
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME} src/LandoltNodelet.cpp)
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(${PROJECT_NAME} capra_landolt_msgs_gencpp)
 
 if(catkin_EXPORTED_LIBRARIES)
