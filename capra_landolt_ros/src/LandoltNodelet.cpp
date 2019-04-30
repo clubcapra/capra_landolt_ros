@@ -29,7 +29,9 @@ private:
     // Subscriber
     boost::shared_ptr<image_transport::ImageTransport> it_;
     image_transport::CameraSubscriber sub_camera_;
+
     int queue_size_{};
+    std::string camera_reading_;
 
     // Publisher
     boost::mutex connect_mutex_;
@@ -70,7 +72,10 @@ void LandoltNodelet::onInit()
 
     // Read parameters
     private_nh.param("queue_size", queue_size_, 5);
-    
+    private_nh.param("camera_reading", camera_reading_, std::string("/camera_3d/rgb/image_raw"));
+
+    ROS_INFO("%s", camera_reading_.c_str());
+
     ros::SubscriberStatusCallback connect_cb = boost::bind(&LandoltNodelet::connectCb, this);
     image_transport::SubscriberStatusCallback img_connect_cb = boost::bind(&LandoltNodelet::connectCb, this);
     // Make sure we don't enter connectCb() between advertising and assigning to pub_rect_
@@ -95,7 +100,7 @@ void LandoltNodelet::connectCb()
     {   
         NODELET_INFO("Connect to Landolt Detector...");
         image_transport::TransportHints hints("raw", ros::TransportHints(), getPrivateNodeHandle());
-        sub_camera_ = it_->subscribeCamera("/capra/camera_3d/rgb/image_raw", static_cast<uint32_t>(queue_size_), &LandoltNodelet::imageCb, this, hints);
+        sub_camera_ = it_->subscribeCamera(camera_reading_, static_cast<uint32_t>(queue_size_), &LandoltNodelet::imageCb, this, hints);
     }
 }
 
